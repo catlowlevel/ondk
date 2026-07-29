@@ -1,26 +1,29 @@
 diff --git a/compiler/rustc_codegen_llvm/src/abi.rs b/compiler/rustc_codegen_llvm/src/abi.rs
-index 99407725..cddcc09b 100644
+index c3bf566b..99bc7862 100644
 --- a/compiler/rustc_codegen_llvm/src/abi.rs
 +++ b/compiler/rustc_codegen_llvm/src/abi.rs
-@@ -509,7 +509,7 @@ fn apply_attrs_llfn(
+@@ -530,7 +530,7 @@ fn apply_attrs_llfn(
+                 }
                  PassMode::Indirect { attrs, meta_attrs: None, on_stack: false } => {
                      let i = apply(attrs);
-                     if cx.sess().opts.optimize != config::OptLevel::No
--                        && llvm_util::get_version() >= (21, 0, 0)
-+                        && (llvm_util::get_version() >= (21, 0, 0) && false)
-                     {
+-                    if cx.sess().opts.optimize != config::OptLevel::No {
++                    if cx.sess().opts.optimize != config::OptLevel::No && false {
                          attributes::apply_to_llfn(
                              llfn,
+                             llvm::AttributePlace::Argument(i),
 diff --git a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp b/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
-index eabc1c94..390585a8 100644
+index 63e3119e..f87cd1fd 100644
 --- a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
 +++ b/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
-@@ -452,7 +452,7 @@ static Attribute::AttrKind fromRust(LLVMRustAttributeKind Kind) {
+@@ -475,7 +475,11 @@ static Attribute::AttrKind fromRust(LLVMRustAttributeKind Kind) {
    case LLVMRustAttributeKind::DeadOnUnwind:
      return Attribute::DeadOnUnwind;
    case LLVMRustAttributeKind::DeadOnReturn:
--#if LLVM_VERSION_GE(21, 0)
-+#if LLVM_VERSION_GE(21, 0) && 0
++#if 0
      return Attribute::DeadOnReturn;
- #else
-     report_fatal_error("DeadOnReturn attribute requires LLVM 21 or later");
++#else
++    report_fatal_error("DeadOnReturn attribute requires LLVM 21 or later");
++#endif
+   case LLVMRustAttributeKind::CapturesAddress:
+   case LLVMRustAttributeKind::CapturesReadOnly:
+   case LLVMRustAttributeKind::CapturesNone:

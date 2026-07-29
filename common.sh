@@ -1,9 +1,9 @@
 # Copyright 2022-2026 Google LLC.
 # SPDX-License-Identifier: Apache-2.0
 
-RUST_VERSION='1.95.0'
+RUST_VERSION='1.97.1'
 
-NDK_VERSION='r30-beta1'
+NDK_VERSION='r30-beta2'
 NDK_DIR_VERSION=$NDK_VERSION
 
 # Android LLVM versions:
@@ -11,10 +11,10 @@ NDK_DIR_VERSION=$NDK_VERSION
 # These revisions are obtained from the Android's LLVM manifest.xml
 LLVM_SVN='574158'
 LLVM_VERSION='9f872551d3c681d06fd303b36f16ed5c274735eb'
-LLVM_ANDROID_VERSION='7f66b813d8e47b8e2be564f40dd9de357380a640'
+LLVM_ANDROID_VERSION='cbd9e7f4da965e4be38f3f9b340d06678ac69fce'
 TOOLCHAIN_UTILS_VERSION='9b4f94761eea83b6edd1b59f485cddff6bd01b38'
 
-OUTPUT_VERSION='r30.0'
+OUTPUT_VERSION='r30.1'
 
 set -e
 shopt -s nullglob
