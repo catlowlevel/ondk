@@ -1,7 +1,7 @@
 # Copyright 2022-2026 Google LLC.
 # SPDX-License-Identifier: Apache-2.0
 
-RUST_VERSION='1.98.1'
+RUST_REF='main'
 
 NDK_VERSION='r30'
 NDK_DIR_VERSION=$NDK_VERSION
@@ -14,7 +14,7 @@ LLVM_VERSION='9f872551d3c681d06fd303b36f16ed5c274735eb'
 LLVM_ANDROID_VERSION='cbd9e7f4da965e4be38f3f9b340d06678ac69fce'
 TOOLCHAIN_UTILS_VERSION='9b4f94761eea83b6edd1b59f485cddff6bd01b38'
 
-OUTPUT_VERSION='r30.2'
+OUTPUT_VERSION='r30.2-nightly'
 
 set -e
 shopt -s nullglob
@@ -81,7 +81,7 @@ clone_llvm() {
 clone_rust() {
   rm -rf src/rust
 
-  git_clone_branch https://github.com/rust-lang/rust $RUST_VERSION
+  git_clone_branch https://github.com/rust-lang/rust $RUST_REF
   cd src/rust
 
   # Skip unused submodules
