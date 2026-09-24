@@ -1,7 +1,7 @@
 # Copyright 2022-2026 Google LLC.
 # SPDX-License-Identifier: Apache-2.0
 
-RUST_REF='main'
+RUST_REF='3670d2532bdf51abbe0b8fea22284d7ca340ffe3'
 
 NDK_VERSION='r30'
 NDK_DIR_VERSION=$NDK_VERSION
@@ -81,7 +81,7 @@ clone_llvm() {
 clone_rust() {
   rm -rf src/rust
 
-  git_clone_branch https://github.com/rust-lang/rust $RUST_REF
+  git_clone_sha https://github.com/rust-lang/rust $RUST_REF
   cd src/rust
 
   # Skip unused submodules
