@@ -12,7 +12,7 @@ Use at your own risk.
 
 Download the latest ONDK in [releases](https://github.com/catlowlevel/ondk/releases/latest).
 
-The CI build produces packages for Linux (x64). This nightly variant builds Rust from the current `rust-lang/rust` `main` branch; builds at different times can contain different Rust commits.
+The CI build produces packages for Linux (x64). This nightly variant builds Rust from the pinned `rust-lang/rust` commit `3670d2532bdf51abbe0b8fea22284d7ca340ffe3` (1.100.0 development source). Update `RUST_REF` explicitly to move to a newer revision.
 
 ## How to Use
 
