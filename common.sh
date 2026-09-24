@@ -49,8 +49,18 @@ git_clone_sha() {
   mkdir -p "src/$dir"
   cd "src/$dir"
   git init -q
-  git remote add origin $1
-  git fetch --depth 1 origin $2
+  git remote add origin "$1"
+  local attempt
+  for attempt in 1 2 3; do
+    if git -c http.version=HTTP/1.1 fetch --depth 1 origin "$2"; then
+      break
+    fi
+    if [ "$attempt" -eq 3 ]; then
+      echo "Failed to fetch $1 at $2 after $attempt attempts" >&2
+      return 1
+    fi
+    sleep $((attempt * 5))
+  done
   git reset --hard FETCH_HEAD
   cd ../../
 }
