@@ -3,17 +3,16 @@
 This is not an officially supported Google product.
 
 Oxidized NDK (ONDK) is an unofficial repackaged [Android NDK](https://developer.android.com/ndk) that includes a Rust toolchain.
-This repository hosts build scripts to build and package ONDK using [GitHub Actions](https://github.com/topjohnwu/ondk/actions).
+This repository hosts build scripts to build and package ONDK using [GitHub Actions](https://github.com/catlowlevel/ondk/actions).
 Every file included in the final package either originates from the official NDK zip or is built in GitHub Actions.
 
 This project does not include or attempt to do any modifications to Rust and LLVM.<br>
 This project is for experimental purposes, and **does not** guarantee any Android NDK or Rust functionality.<br>
 Use at your own risk.
 
-Download the latest ONDK in [releases](https://github.com/topjohnwu/ondk/releases/latest).
+Download the latest ONDK in [releases](https://github.com/catlowlevel/ondk/releases/latest).
 
-Supports all NDK host platforms:<br>
-Linux (x64), Windows (x64), and macOS (x64 + arm64, universal binaries).
+The CI build produces packages for Linux (x64).
 
 ## How to Use
 
