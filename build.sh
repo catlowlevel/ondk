@@ -46,7 +46,20 @@ config_rust_build() {
     set_build_cfg llvm.static-libstdcpp true
     set_build_cfg target.${TRIPLE}.cc clang-$LINUX_HOST_LLVM_VER
     set_build_cfg target.${TRIPLE}.cxx clang++-$LINUX_HOST_LLVM_VER
-    set_build_cfg target.${TRIPLE}.linker clang-$LINUX_HOST_LLVM_VER
+
+    # Rust archives contain LLVM bitcode. Use the matching Clang and LLD
+    # built above, rather than the host's default GNU ld.
+    local llvm_bin
+    llvm_bin="$(realpath out/llvm/bin)"
+    test -x "$llvm_bin/clang"
+    test -x "$llvm_bin/ld.lld"
+    cat > out/ondk-linker <<'LINKER'
+#!/usr/bin/env bash
+llvm_bin="$(dirname "$0")/llvm/bin"
+exec "$llvm_bin/clang" -fuse-ld=lld -B"$llvm_bin" "$@"
+LINKER
+    chmod +x out/ondk-linker
+    set_build_cfg target.${TRIPLE}.linker "$(realpath out/ondk-linker)"
     export LD_LIBRARY_PATH="$(realpath out/llvm/lib)"
   fi
 }
