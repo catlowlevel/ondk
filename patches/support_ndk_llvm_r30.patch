@@ -27,3 +27,12 @@ index 63e3119e..f87cd1fd 100644
    case LLVMRustAttributeKind::CapturesAddress:
    case LLVMRustAttributeKind::CapturesReadOnly:
    case LLVMRustAttributeKind::CapturesNone:
+diff --git a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp b/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
+--- a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
++++ b/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
+@@ -1,3 +1,3 @@
+ extern "C" LLVMValueRef LLVMRustBuildVScale(LLVMBuilderRef B, LLVMTypeRef Ty) {
+-  return wrap(unwrap(B)->CreateVScale(unwrap(Ty)));
++  return wrap(unwrap(B)->CreateVScale(ConstantInt::get(unwrap(Ty), 1)));
+ }
+
