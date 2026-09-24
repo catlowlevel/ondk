@@ -1,16 +1,16 @@
 diff --git a/compiler/rustc_codegen_llvm/src/abi.rs b/compiler/rustc_codegen_llvm/src/abi.rs
-index c3bf566b..99bc7862 100644
 --- a/compiler/rustc_codegen_llvm/src/abi.rs
 +++ b/compiler/rustc_codegen_llvm/src/abi.rs
-@@ -530,7 +530,7 @@ fn apply_attrs_llfn(
-                 }
-                 PassMode::Indirect { attrs, meta_attrs: None, on_stack: false } => {
+@@ -1,8 +1,8 @@
+                     mode: IndirectMode::Pointer,
+                 } => {
                      let i = apply(attrs);
 -                    if cx.sess().opts.optimize != config::OptLevel::No {
 +                    if cx.sess().opts.optimize != config::OptLevel::No && false {
                          attributes::apply_to_llfn(
                              llfn,
                              llvm::AttributePlace::Argument(i),
+                             &[llvm::AttributeKind::DeadOnReturn.create_attr(cx.llcx)],
 diff --git a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp b/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
 index 63e3119e..f87cd1fd 100644
 --- a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
