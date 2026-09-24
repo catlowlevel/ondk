@@ -42,7 +42,6 @@ config_rust_build() {
   if [ $OS = "darwin" ]; then
     export DYLD_FALLBACK_LIBRARY_PATH="$(realpath out/llvm/lib)"
   else
-    set_build_cfg rust.use-lld true
     set_build_cfg llvm.use-libcxx true
     set_build_cfg llvm.static-libstdcpp true
     set_build_cfg target.${TRIPLE}.cc clang-$LINUX_HOST_LLVM_VER
