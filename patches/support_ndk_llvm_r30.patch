@@ -36,3 +36,38 @@ diff --git a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp b/compiler/rustc_l
 +  return wrap(unwrap(B)->CreateVScale(ConstantInt::get(unwrap(Ty), 1)));
  }
 
+--- a/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
++++ b/compiler/rustc_llvm/llvm-wrapper/RustWrapper.cpp
+@@ -1877,7 +1877,7 @@
+           return {getFileIndex(It->S), LineNum};
+       }
+     }
+-    return NotFound;
++    return {0, 0};
+   }
+ 
+ private:
+@@ -1907,7 +1907,8 @@
+     return llvm::SpecialCaseList::inSectionBlame(S.Entries, Prefix, Query,
+                                                  Category);
+   }
+-  static unsigned getFileIndex(const Section &S) { return S.FileIdx; }
++  // LLVM 20 does not track the originating file index for each section.
++  static unsigned getFileIndex(const Section &) { return 0; }
+ #endif
+ 
+   void createSanitizerSections() {
+@@ -1916,7 +1917,12 @@
+ #else
+     const auto &SecList = Sections;
+ #endif
+-    for (const auto &S : SecList) {
++    for (const auto &SectionEntry : SecList) {
++#if LLVM_VERSION_GE(22, 0)
++      const auto &S = SectionEntry;
++#else
++      const auto &S = SectionEntry.getValue();
++#endif
+       uint32_t Mask = 0;
+ 
+       // All sanitizers: [all]
