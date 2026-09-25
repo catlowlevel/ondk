@@ -29,7 +29,7 @@ if [ $OS = "darwin" ]; then
   export PATH="$(brew --prefix)/opt/gpatch/libexec/gnubin:$PATH"
   export MACOSX_DEPLOYMENT_TARGET=11.0
 else
-  NDK_DIRNAME='linux-x86_64'
+  NDK_DIRNAME="linux-${NATIVE_ARCH}"
   TRIPLE="${ARCH}-unknown-linux-gnu"
   NATIVE_TRIPLE="${NATIVE_ARCH}-unknown-linux-gnu"
   DYN_EXT='so'
@@ -106,6 +106,24 @@ ndk() {
   dl_ndk
   cd out
 
+  if [ "$OS" = linux ] && [ "$NATIVE_ARCH" = aarch64 ]; then
+    # The official Linux NDK archive is x86_64 only. Keep its Android
+    # sysroot and compiler resources, but remove host x86_64 executables.
+    mv ndk/toolchains/llvm/prebuilt/linux-x86_64 \
+       ndk/toolchains/llvm/prebuilt/linux-aarch64
+    find ndk/toolchains/llvm/prebuilt/linux-aarch64/bin -maxdepth 1 \
+      -type f -exec file {} + | awk -F: '/ELF.*x86-64/ {print $1}' | \
+      while IFS= read -r binary; do rm -f "$binary"; done
+    for host_lib in ndk/toolchains/llvm/prebuilt/linux-aarch64/lib \
+                    ndk/toolchains/llvm/prebuilt/linux-aarch64/lib64; do
+      if [ -d "$host_lib" ]; then
+        find "$host_lib" -maxdepth 1 -type f -exec file {} + | \
+          awk -F: '/ELF.*x86-64/ {print $1}' | \
+          while IFS= read -r binary; do rm -f "$binary"; done
+      fi
+    done
+  fi
+
   # Copy the whole output folder into ndk
   cp -af collect ndk/toolchains/rust
 
@@ -115,6 +133,11 @@ ndk() {
 
   # Replace files with those from the rust toolchain
   update_dir rust/llvm-bin $LLVM_DIR/bin
+  if [ "$OS" = linux ] && [ "$NATIVE_ARCH" = aarch64 ]; then
+    # The NDK's x86_64 bin directory contains tools absent from the
+    # original LLVM toolchain; add all native LLVM tools as well.
+    cp -an rust/llvm-bin/. "$LLVM_DIR/bin/"
+  fi
   rm -rf rust/llvm-bin
   cd $LLVM_DIR/lib
   ln -sf ../../../../rust/lib/*.$DYN_EXT* .

@@ -5,8 +5,16 @@ on:
 
 jobs:
   linux:
-    name: Build for Linux
-    runs-on: ubuntu-22.04
+    name: Build for Linux (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-22.04
+          - arch: aarch64
+            runner: ubuntu-22.04-arm
+    runs-on: ${{ matrix.runner }}
 
     steps:
       - name: Check out
@@ -20,6 +28,7 @@ jobs:
           python-version: "3.x"
 
       - name: Clean up storage
+        if: matrix.arch == 'x86_64'
         run: |
           sudo rm -rf \
             "$JAVA_HOME_8_X64" "$JAVA_HOME_11_X64" "$JAVA_HOME_17_X64" "$JAVA_HOME_21_X64" \
@@ -36,6 +45,15 @@ jobs:
           sudo apt-get -y install libc++-20-dev libc++abi-20-dev
           rm llvm.sh
           ./build.sh
+
+      - name: Check native AArch64 compiler tools
+        if: matrix.arch == 'aarch64'
+        run: |
+          llvm_bin="out/ondk-r30.2-nightly/toolchains/llvm/prebuilt/linux-aarch64/bin"
+          rust_bin="out/ondk-r30.2-nightly/toolchains/rust/bin"
+          file "$llvm_bin/clang" "$rust_bin/rustc"
+          "$llvm_bin/clang" --version
+          "$rust_bin/rustc" --version
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7

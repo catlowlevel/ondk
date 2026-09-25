@@ -183,7 +183,11 @@ dist() {
   cd out
   mv ndk "ondk-${OUTPUT_VERSION}"
   mkdir ../dist
-  tar c "ondk-${OUTPUT_VERSION}" | xz --x86 --lzma2 > "../dist/ondk-${OUTPUT_VERSION}-${OS}.tar.xz"
+  local archive="ondk-${OUTPUT_VERSION}-${OS}"
+  if [ "$OS" = linux ] && [ "$NATIVE_ARCH" = aarch64 ]; then
+    archive="${archive}-aarch64"
+  fi
+  tar c "ondk-${OUTPUT_VERSION}" | xz --x86 --lzma2 > "../dist/${archive}.tar.xz"
   cd ../
 }
 

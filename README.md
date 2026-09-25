@@ -12,7 +12,7 @@ Use at your own risk.
 
 Download the latest ONDK in [releases](https://github.com/catlowlevel/ondk/releases/latest).
 
-The CI build produces packages for Linux (x64). This nightly variant builds Rust from the pinned `rust-lang/rust` commit `3670d2532bdf51abbe0b8fea22284d7ca340ffe3` (1.100.0 development source). Update `RUST_REF` explicitly to move to a newer revision.
+The CI build produces packages for Linux x86_64 and AArch64 hosts. The AArch64 package builds Rust and LLVM natively, using the Android sysroot and compiler resources from the official x86_64 Linux NDK archive. Other bundled NDK host tools are not rebuilt for AArch64 and may require native replacements. This nightly variant builds Rust from the pinned `rust-lang/rust` commit `3670d2532bdf51abbe0b8fea22284d7ca340ffe3` (1.100.0 development source). Update `RUST_REF` explicitly to move to a newer revision.
 
 ## How to Use
 
@@ -28,7 +28,7 @@ The `std` crate is _intentionally_ not prebuilt and included in ONDK, so buildin
 Here is an example for building a project targeting API 21 for ARM64:
 
 ```bash
-LLVM_BIN="<ondk>/toolchains/llvm/prebuilt/<os>-x86_64/bin"
+LLVM_BIN="<ondk>/toolchains/llvm/prebuilt/linux-<host-arch>/bin"
 
 # We need to tell cargo where to find the NDK linker for Android.
 # You can also set this in config.toml, check the official documentation.
