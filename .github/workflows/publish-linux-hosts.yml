@@ -1,0 +1,49 @@
+name: Publish Linux host artifacts
+
+on:
+  push:
+    branches:
+      - codex/linux-aarch64-host
+    paths:
+      - .github/workflows/publish-linux-hosts.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    if: github.event.head_commit.message == 'Publish both Linux host artifacts'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download the successful build artifacts
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          mkdir -p dist
+          gh run download 36156769391 --name ondk-r30.2-nightly-linux.tar.xz --dir dist
+          gh run download 36156769391 --name ondk-r30.2-nightly-linux-aarch64.tar.xz --dir dist
+          test -s dist/ondk-r30.2-nightly-linux.tar.xz
+          test -s dist/ondk-r30.2-nightly-linux-aarch64.tar.xz
+          sha256sum dist/*.tar.xz
+
+      - name: Upload both archives and update release notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release upload r30.2-nightly dist/ondk-r30.2-nightly-linux.tar.xz dist/ondk-r30.2-nightly-linux-aarch64.tar.xz --clobber
+          {
+            echo 'ONDK r30 with Rust development source pinned to `3670d2532bdf51abbe0b8fea22284d7ca340ffe3`.'
+            echo
+            echo 'Linux x86_64 and AArch64 host builds from commit [8a93d33](https://github.com/catlowlevel/ondk/commit/8a93d3345b3ce3e36d56f094fe4d164dfb839e20) in [workflow run 36156769391](https://github.com/catlowlevel/ondk/actions/runs/36156769391).'
+            echo
+            echo 'The AArch64 archive includes native Rust and LLVM compiler tools plus the official NDK Android sysroot. Other bundled NDK host utilities may require native replacements.'
+            echo
+            echo 'SHA-256:'
+            echo '```'
+            sha256sum dist/*.tar.xz | sed 's#dist/##'
+            echo '```'
+          } > release-notes.md
+          gh release edit r30.2-nightly --title 'ONDK r30.2 nightly (Linux x86_64 and AArch64)' --notes-file release-notes.md
